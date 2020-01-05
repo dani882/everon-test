@@ -1,10 +1,3 @@
-/******************************************
-  Retrieve authentication token
- *****************************************/
-# data "google_client_config" "current" {
-#   provider = google
-# }
-
 provider "kubernetes" {
   load_config_file       = false
   host                   = var.host
@@ -61,7 +54,6 @@ resource "kubernetes_deployment" "nginx" {
     }
   }
 }
-
 
 resource "kubernetes_service" "nginx" {
   metadata {
