@@ -1,40 +1,75 @@
-data "google_client_config" "current" {
-}
+/******************************************
+  Retrieve authentication token
+ *****************************************/
+# data "google_client_config" "current" {
+#   provider = google
+# }
 
 provider "kubernetes" {
   load_config_file       = false
-  host                   = "https://${module.gke.cluster_endpoint}"
-  cluster_ca_certificate = module.gke.cluster_ca_certificate
-  token                  = data.google_client_config.current.access_token
+  host                   = var.host
+  cluster_ca_certificate = var.cluster_ca_certificate
+  token                  = var.token
 }
 
-resource "kubernetes_pod" "nginx" {
+resource "kubernetes_deployment" "nginx" {
   metadata {
     name = "everon-nginx"
     labels = {
-      App = "nginx"
+      App = "EveronTest"
     }
   }
 
   spec {
-    container {
-      image = "gcr.io/original-bolt-264015/everon-nginx"
-      name  = "everon-nginx"
+    replicas = 3
 
-      port {
-        container_port = 443
+    selector {
+      match_labels = {
+        App = "EveronTest"
+      }
+    }
+
+    template {
+      metadata {
+        labels = {
+          App = "EveronTest"
+        }
+      }
+
+      spec {
+        container {
+          image = "jrdevers/everon-nginx"
+          name  = "everon-nginx"
+
+          port {
+            container_port = 443
+          }
+
+
+          resources {
+            limits {
+              cpu    = "0.5"
+              memory = "512Mi"
+            }
+            requests {
+              cpu    = "250m"
+              memory = "50Mi"
+            }
+          }
+        }
       }
     }
   }
 }
 
+
 resource "kubernetes_service" "nginx" {
   metadata {
-    name = "everon-nginx"
+    name = "everon-service-nginx"
   }
   spec {
     selector = {
-      App = kubernetes_pod.nginx.metadata[0].labels.App
+      App = kubernetes_deployment.nginx.metadata[0].labels.App
     }
     port {
       port        = 443

@@ -87,7 +87,7 @@ resource "google_container_node_pool" "node_pool" {
     # https://github.com/gruntwork-io/terraform-google-network/tree/master/modules/vpc-network#access-tier
     tags = [
       module.vpc_network.public,
-      "public-pool-example",
+      "public-pool-everon-cluster",
     ]
 
     disk_size_gb = "30"
@@ -98,6 +98,7 @@ resource "google_container_node_pool" "node_pool" {
 
     oauth_scopes = [
       "https://www.googleapis.com/auth/cloud-platform",
+      "https://www.googleapis.com/auth/devstorage.read_write",
     ]
   }
 
