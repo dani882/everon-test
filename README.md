@@ -1,4 +1,4 @@
-# Jesus Rivera's Everon's DevOps assignment project using Terraform and Google GKE
+# Demo project using Terraform and Google GKE
 
 
 ## Overview
